@@ -66,8 +66,8 @@ namespace johnshope.Sync {
 				p.Transferred += a.BytesTransferred;
 				if (a.ElapsedTime - p.ElapsedTime > Interval) {
 					Log.Progress(p.Path, p.Size, p.Transferred, a.ElapsedTime);
-					Log.Text(ftp.dw.TotalMilliseconds.ToString());
-					Log.Text(ftp.dr.TotalMilliseconds.ToString());
+					//Log.Text(ftp.dw.TotalMilliseconds.ToString());
+					//Log.Text(ftp.dr.TotalMilliseconds.ToString());
 					p.ElapsedTime = a.ElapsedTime;
 				}
 			}

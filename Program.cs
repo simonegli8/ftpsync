@@ -5,7 +5,7 @@ using System.Text;
 
 
 namespace johnshope.Sync {
-	
+
 	public enum CopyMode { Update, Clone, Add }
 
 	public class Program {
@@ -13,7 +13,7 @@ namespace johnshope.Sync {
 		public static CopyMode Mode = CopyMode.Clone;
 		public static string Log = null;
 		public static bool Verbose = false;
-        public static string ExcludePatterns = null;
+		public static string ExcludePatterns = null;
 
 #if NET4
 		public const string WelcomeMsg = "johnshope's ftp and folder sync v1.10 for .NET 4";
@@ -23,11 +23,11 @@ namespace johnshope.Sync {
 
 		static void Main(string[] argsarr) {
 
-            var args = new Arguments(argsarr);
+			var args = new Arguments(argsarr);
 
-            bool wait = false;
+			bool wait = false;
 
-            try {
+			try {
 
 
 				if (args.Count < 2 || 7 < args.Count) {
@@ -47,7 +47,7 @@ namespace johnshope.Sync {
 					Console.WriteLine("  - \"zip\" for compression if the server supports it");
 					Console.WriteLine("  - \"raw\" for no compression");
 					Console.WriteLine("  - \"old\" to use the most compatible ftp command set for old ftp servers");
-                    Console.WriteLine("  - \"time\" for the server's time offset to utc time. If you omit time, sync");
+					Console.WriteLine("  - \"time\" for the server's time offset to utc time. If you omit time, sync");
 					Console.WriteLine("    will autodetect the time offset (The MDTM command must be supported by the server for this).");
 					Console.WriteLine("  - \"crc\" for auto CRC32 data transfer checksum check.");
 					Console.WriteLine("  - \"md5\" for auto MD5 data transfer checksum check.");
@@ -58,34 +58,34 @@ namespace johnshope.Sync {
 					Console.WriteLine("- The /clone option tells sync to clone the source and discard all changes in the destination. This is the default.");
 					Console.WriteLine("- The /add option tells sync to add all files that are not present or outdated in the destination, but not");
 					Console.WriteLine("  to delete any files or overwrite newer files.");
-                    Console.WriteLine("- With the /x you can specify a comma or semicolon separated list of exclude file patterns.");
-                    Console.WriteLine("  Use / instead of \\ in patterns. Only one asterisk (*) is allowed per pattern, so instead of ");
-                    Console.WriteLine("  myfolder/*.* you would write myfolder/* .");
+					Console.WriteLine("- With the /x you can specify a comma or semicolon separated list of exclude file patterns.");
+					Console.WriteLine("  Use / instead of \\ in patterns. Only one asterisk (*) is allowed per pattern, so instead of ");
+					Console.WriteLine("  myfolder/*.* you would write myfolder/* .");
 					Console.WriteLine("- You can redirect output to a logfile by specifying a logfile name.");
 					Console.WriteLine("- You can set the output to verbose mode with the /v switch.");
 					return;
 				}
-                
-                Uri src, dest;
-                var srcarg = args.Pop();
-                var destarg = args.Pop();
-                if (srcarg.Contains(':')) src = new Uri(srcarg);
-                else src = new Uri(System.IO.Path.Combine(Environment.CurrentDirectory, srcarg));
+
+				Uri src, dest;
+				var srcarg = args.Pop();
+				var destarg = args.Pop();
+				if (srcarg.Contains(':')) src = new Uri(srcarg);
+				else src = new Uri(System.IO.Path.Combine(Environment.CurrentDirectory, srcarg));
 				if (destarg.Contains(':')) dest = new Uri(destarg);
-                else dest = new Uri(System.IO.Path.Combine(Environment.CurrentDirectory, destarg));
+				else dest = new Uri(System.IO.Path.Combine(Environment.CurrentDirectory, destarg));
 				Log = null;
 				Verbose = false;
 
-                Mode = CopyMode.Clone;
-                if (args.Has("/update")) Mode = CopyMode.Update;
-                if (args.Has("/add")) Mode = CopyMode.Add;
-                if (args.Has("/clone")) Mode = CopyMode.Clone;
-                args.Has("/x", out ExcludePatterns);
-                ExcludePatterns = ExcludePatterns ?? "";
-                Verbose = args.Has("/v");
-                wait = args.Has("/w");
+				Mode = CopyMode.Clone;
+				if (args.Has("/update")) Mode = CopyMode.Update;
+				if (args.Has("/add")) Mode = CopyMode.Add;
+				if (args.Has("/clone")) Mode = CopyMode.Clone;
+				args.Has("/x", out ExcludePatterns);
+				ExcludePatterns = ExcludePatterns ?? "";
+				Verbose = args.Has("/v");
+				wait = args.Has("/w");
 				//if (args.Has("/t")) SpeedTest.Test();
-                Log = args.Pop();
+				Log = args.Pop();
 
 
 				var now = DateTime.Now;
