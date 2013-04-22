@@ -6,7 +6,7 @@ using Starksoft.Net.Ftp;
 
 namespace johnshope.Sync {
 
-	public class FtpStream: BlockingStream {
+	public class FtpStream: PipeStream {
 
 		public FtpClient Client { get; set; }
 		public string Path { get; set; }
@@ -16,7 +16,7 @@ namespace johnshope.Sync {
 
 		protected override void Dispose(bool disposing) {
 			base.Dispose(disposing);
-			FtpConnections.Pass(Client);
+			//FtpConnections.Pass(Client);
 			Log.Download(Path, Size, DateTime.Now - start);
 		}
 	}

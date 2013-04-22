@@ -3,19 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics.Contracts;
 using Starksoft.Net.Ftp;
 
 namespace johnshope.Sync {
 
-	public class FtpDirectory: FileOrDirectory, IDirectory {
+	public class FtpDirectory : FileOrDirectory, IDirectory {
 
-        Uri url;
-        public Uri Url { get { return url; } set { url = value; } }
+		Uri url;
+		public Uri Url { get { return url; } set { url = value; } }
 
 		public bool TransferProgress { get; set; }
 
 		public FtpDirectory(FileOrDirectory parent, Uri url) {
-            Parent = parent;
+			Parent = parent;
 			if (url.Scheme != "ftp" && url.Scheme != "ftps") throw new NotSupportedException();
 			Url = url;
 			Name = url.File();
@@ -32,8 +33,13 @@ namespace johnshope.Sync {
 		public DirectoryListing List() {
 			var ftp = FtpConnections.Open(ref url);
 			try {
-				ftp.FileTransferType = TransferType.Ascii;
-				var list = ftp.GetDirList().Select(fi => fi.ItemType == FtpItemType.Directory ? new FtpDirectory(this, Url.Relative(fi.Name)) : new FileOrDirectory { Name = fi.Name, Class = ObjectClass.File, Changed = fi.Modified, Size = fi.Size, Parent = this }).ToList();
+				ftp.FileTransferType = TransferType.Binary;
+				var list = ftp.GetDirList()
+					.Select(fi =>
+						fi.ItemType == FtpItemType.Directory ?
+							new FtpDirectory(this, Url.Relative(fi.Name)) :
+							new FileOrDirectory { Name = fi.Name, Class = ObjectClass.File, Changed = fi.Modified, Size = fi.Size, Parent = this })
+					.ToList();
 				return new DirectoryListing(list);
 			} catch (Exception ex) {
 				Sync.Failure(this, ex, ftp);
@@ -52,7 +58,7 @@ namespace johnshope.Sync {
 			public TimeSpan ElapsedTime;
 		}
 
-		Dictionary<FtpClient, ProgressData> progress = new Dictionary<FtpClient,ProgressData>();
+		Dictionary<FtpClient, ProgressData> progress = new Dictionary<FtpClient, ProgressData>();
 		public void ShowProgress(object sender, TransferProgressEventArgs a) {
 			if (TransferProgress) {
 				var ftp = (FtpClient)sender;
@@ -64,7 +70,7 @@ namespace johnshope.Sync {
 					Log.Text(ftp.dr.TotalMilliseconds.ToString());
 					p.ElapsedTime = a.ElapsedTime;
 				}
-			}	
+			}
 		}
 
 		public void WriteFile(System.IO.Stream file, FileOrDirectory src) {
@@ -81,7 +87,7 @@ namespace johnshope.Sync {
 				var start = DateTime.Now;
 				ftp.PutFile(file, src.Name, FileAction.Create);
 				ftp.SetDateTime(src.Name, src.ChangedUtc);
-			
+
 				Log.Upload(path, src.Size, DateTime.Now - start);
 			} catch (Exception e) {
 				Sync.Failure(src, e, ftp);
@@ -96,12 +102,14 @@ namespace johnshope.Sync {
 
 		public System.IO.Stream ReadFile(FileOrDirectory src) {
 			var ftp = FtpConnections.Open(ref url);
+			bool running = false;
 			try {
 				if (ftp.FileTransferType != TransferType.Binary) ftp.FileTransferType = TransferType.Binary;
 				var file = new FtpStream();
 				file.Client = ftp;
 				file.Path = Url.Path() + "/" + src.Name;
 				file.Size = src.Size;
+				running = true;
 				Task.Factory.StartNew(() => {
 					try {
 						if (TransferProgress) {
@@ -109,7 +117,7 @@ namespace johnshope.Sync {
 							ftp.TransferProgress += ShowProgress;
 						}
 						using (var f = file) { ftp.GetFile(src.Name, f, false); }
-					
+
 					} catch (Exception ex) {
 						Sync.Failure(src, ex, ftp);
 						file.Exception(ex);
@@ -118,13 +126,15 @@ namespace johnshope.Sync {
 							ftp.TransferProgress -= ShowProgress;
 							progress.Remove(ftp);
 						}
+						FtpConnections.Pass(ftp);
 					}
 				});
-				return file;	
+				return file;
 			} catch (Exception e) {
 				Sync.Failure(src, e, ftp);
-            } finally {
-                FtpConnections.Pass(ftp);
+			} finally {
+				// no pass ftp because ftp is passed by task
+				if (!running) FtpConnections.Pass(ftp);
 			}
 			return null;
 		}
@@ -176,15 +186,15 @@ namespace johnshope.Sync {
 				//var ps = path.Split('/');
 				//var cs = curpath.Split('/');
 				//var j = cs.Length-1;	
-                //var i = Math.Min(ps.Length, j+1);
-                //while (j > i-1) { ftp.ChangeDirectoryUp(); j--; }
-                //while (j > 0 && ps[j] != cs[j]) { ftp.ChangeDirectoryUp(); j--; i = j+1; }
-				
+				//var i = Math.Min(ps.Length, j+1);
+				//while (j > i-1) { ftp.ChangeDirectoryUp(); j--; }
+				//while (j > 0 && ps[j] != cs[j]) { ftp.ChangeDirectoryUp(); j--; i = j+1; }
+
 				//while (i < ps.Length) { str.Append("/"); str.Append(ps[i++]); }
 
 				//var dir = str.ToString();
 				ftp.MakeDirectory(path);
-				
+
 				//if (url.Query()["old"] != null) ftp.ChangeDirectoryMultiPath(path);
 				//else ftp.ChangeDirectory(path);
 

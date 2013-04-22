@@ -30,6 +30,19 @@ namespace johnshope.Sync {
 			}
 		}
 
+		public T Dequeue(Func<T, bool> where) {
+			lock (this) {
+				if (base.Count > 0) {
+					var entry = First;
+					while (entry != null && entry.Value != null && !where(entry.Value)) entry = entry.Next;
+					if (entry == null) entry = First;
+					Remove(entry);
+					return entry.Value;
+				} else return default(T);
+			}
+		}
+
+
 	
 		public event EventHandler Blocking;
 		public event EventHandler Blocked;
@@ -38,6 +51,16 @@ namespace johnshope.Sync {
 			do {
 				lock (this) {
 					if (base.Count > 0) return Dequeue();
+				}
+				if (Blocking != null) Blocking(this, EventArgs.Empty);
+				signal.WaitOne();
+				if (Blocked != null) Blocked(this, EventArgs.Empty);
+			} while (true);
+		}
+		public T DequeueOrBlock(Func<T, bool> where) {
+			do {
+				lock (this) {
+					if (base.Count > 0) return Dequeue(where);
 				}
 				if (Blocking != null) Blocking(this, EventArgs.Empty);
 				signal.WaitOne();

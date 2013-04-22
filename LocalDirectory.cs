@@ -52,8 +52,8 @@ namespace johnshope.Sync {
 			try {
 				var path = System.IO.Path.Combine(Path, src.Name);
 				using (var dstream = File.Create(path)) {
-					if (sstream is BlockingStream) {
-						((BlockingStream)sstream).Read(dstream);
+					if (sstream is PipeStream) {
+						((PipeStream)sstream).Read(dstream);
 					} else {
 						Streams.Copy(sstream, dstream);
 					}

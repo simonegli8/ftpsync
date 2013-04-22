@@ -8,7 +8,7 @@ namespace johnshope.Sync {
 
 	enum StreamConsumer { Undefined, Reader, Writer }
  
-	public class BlockingStream: Stream {
+	public class PipeStream: Stream {
 
 		private object _lockForRead;
 		private object _lockForAll;
@@ -25,7 +25,7 @@ namespace johnshope.Sync {
 		[ThreadStatic]
 		private static StreamConsumer _consumer = StreamConsumer.Undefined;
 
-		public BlockingStream() {
+		public PipeStream() {
 			_chunks = new Queue<object>();
 			_doneWriting = new ManualResetEvent(false);
 			_dataAvailable = new ManualResetEvent(false);

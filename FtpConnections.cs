@@ -2,14 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Diagnostics.Contracts;
 using Starksoft.Net.Ftp;
 
 namespace johnshope.Sync {
 
 	public class FtpConnections {
-		
+
 		static Dictionary<string, ResourceQueue<FtpClient>> Queue = new Dictionary<string, ResourceQueue<FtpClient>>();
 		static Dictionary<string, int?> TimeOffsets = new Dictionary<string, int?>();
+		static Dictionary<string, string> Features = new Dictionary<string, string>();
 
 		static string Key(FtpClient ftp) { return ftp.Host + ":" + ftp.Port.ToString(); }
 		static string Key(Uri uri) { return uri.Host + ":" + uri.Port.ToString(); }
@@ -43,8 +45,12 @@ namespace johnshope.Sync {
 		public static string FTPTag(int n) { return "FTP" + n.ToString(); }
 
 		public static FtpClient Open(ref Uri url) {
+			var pathchanged = false;
+			bool pathcorrect = false;
+			string oldpath,oldftppath;
 			var queue = Queue[Key(url)];
-			var ftp = queue.DequeueOrBlock();
+			var path = url.Path();
+			var ftp = queue.DequeueOrBlock(client => client.CurrentDirectory == client.CorrectPath(path));
 			try {
 				if (ftp == null) {
 					ftp = new johnshope.Sync.FtpClient(url.Host, url.Port, url.Scheme == "ftps" ? FtpSecurityProtocol.Tls1Explicit : FtpSecurityProtocol.None, ++clientIndex);
@@ -54,7 +60,7 @@ namespace johnshope.Sync {
 							lock (Log.Lock) { Log.YellowLabel(FTPTag(ftp.Index) + "> "); Log.Text(args.Request.Text); }
 						});
 						ftp.ServerResponse += new EventHandler<FtpResponseEventArgs>((sender, args) => {
-							lock (Log.Lock) { Log.Label(FTPTag(ftp.Index) + ": "); Log.Text(args.Response.Text); }
+							lock (Log.Lock) { Log.Label(FTPTag(ftp.Index) + ": "); Log.Text(args.Response.RawText); }
 						});
 					}
 					if (url.Query()["passive"] != null || url.Query()["active"] == null) ftp.DataTransferMode = TransferMode.Passive;
@@ -66,30 +72,38 @@ namespace johnshope.Sync {
 				} else {
 					if (!ftp.IsConnected) ftp.Reopen();
 				}
+				ftp.Clients++;
+				if (ftp.Clients != 1) throw new Exception("FTP connection is opened by multiple clients.");
 				if (!ftp.IsConnected) {
-                    if (!string.IsNullOrEmpty(url.UserInfo)) {
-                        if (url.UserInfo.Contains(':')) {
-                            var user = url.UserInfo.Split(':');
-                            ftp.Open(user[0], user[1]);
-                        } else {
-                            ftp.Open(url.UserInfo, string.Empty);
-                        }
-                    } else {
-                        ftp.Open("Anonymous", "anonymous");
-                    }
-				}
-				// change path
-				var path = ftp.CorrectPath(url.Path());
-				if (url.Query()["raw"] != null && ftp.IsCompressionEnabled) ftp.CompressionOff();
-				if (url.Query()["zip"] != null && ftp.IsCompressionEnabled) ftp.CompressionOn();
-				if (ftp.CurrentDirectory != path) {
-					try {
-						if (url.Query()["old"] != null) ftp.ChangeDirectoryMultiPath(path);
-						else ftp.ChangeDirectory(path);
-					} catch (Exception ex) {
-						ftp.MakeDirectory(path);
-						if (url.Query()["old"] != null) ftp.ChangeDirectoryMultiPath(path);
-						else ftp.ChangeDirectory(path);
+					if (!string.IsNullOrEmpty(url.UserInfo)) {
+						if (url.UserInfo.Contains(':')) {
+							var user = url.UserInfo.Split(':');
+							ftp.Open(user[0], user[1]);
+						} else {
+							ftp.Open(url.UserInfo, string.Empty);
+						}
+					} else {
+						ftp.Open("Anonymous", "anonymous");
+					}
+					// set encoding
+					string features;
+					if (!Features.TryGetValue(Key(url), out features)) {
+						features = ftp.GetFeatures();
+						Features.Add(Key(url), features);
+					}
+					// set encoding
+					if (url.Query()["old"] == null) {
+						if (features.Contains("UTF8")) {
+							ftp.CharacterEncoding = System.Text.Encoding.UTF8;
+							ftp.Quote("OPTS UTF8 ON");
+						} else if (features.Contains("UTF7")) {
+							ftp.CharacterEncoding = System.Text.Encoding.UTF7;
+							ftp.Quote("OPTS UTF7 ON");
+						} else {
+							ftp.CharacterEncoding = System.Text.Encoding.ASCII;
+						}
+					} else {
+						ftp.CharacterEncoding = System.Text.Encoding.ASCII;
 					}
 				}
 				// get server local time offset
@@ -102,24 +116,44 @@ namespace johnshope.Sync {
 						ftp.TimeOffset = ftp.ServerTimeOffset;
 					}
 				}
-            } catch (FtpDataConnectionException ex) {
-                if (url.Query()["passive"] == null) {
+				// change path
+				path = ftp.CorrectPath(url.Path());
+				if (url.Query()["raw"] != null && ftp.IsCompressionEnabled) ftp.CompressionOff();
+				if (url.Query()["zip"] != null && ftp.IsCompressionEnabled) ftp.CompressionOn();
+				if (ftp.CurrentDirectory != path) {
+					try {
+						if (url.Query()["old"] != null) ftp.ChangeDirectoryMultiPath(path);
+						else ftp.ChangeDirectory(path);
+					} catch (Exception ex) {
+						ftp.MakeDirectory(path);
+						if (url.Query()["old"] != null) ftp.ChangeDirectoryMultiPath(path);
+						else ftp.ChangeDirectory(path);
+					}
+					if (ftp.CurrentDirectory != ftp.CorrectPath(url.Path()))
+						throw new Exception(string.Format("Cannot change to correct path {0}.", url.Path()));
+				}
+			} catch (FtpDataConnectionException ex) {
+				if (url.Query()["passive"] == null) {
 					url = new Uri(url.ToString() + (url.Query().Count > 0 ? "&" : "%3F") + "passive", true);
 					ftp.Close();
 					ftp.DataTransferMode = TransferMode.Passive;
+					ftp.Clients++;
 					Pass(ftp);
 					return Open(ref url);
-                } else {
-                    Log.Exception(ex);
-                }
+				} else {
+					Log.Exception(ex);
+				}
 			} catch (Exception e) {
 				Log.Exception(e);
 			}
+			if (ftp.Clients != 1 || ftp.CurrentDirectory != ftp.CorrectPath(url.Path())) 
+				throw new Exception("FTP connection open postcondition failed.");
 			return ftp;
 		}
 
 		public static void Pass(FtpClient client) {
-			if (client != null) { }
+			if (client == null || client.Clients != 1) throw new Exception("FTP connection pass precondition failed.");
+			client.Clients--;
 			Queue[Key(client)].Enqueue(client);
 		}
 
@@ -131,10 +165,10 @@ namespace johnshope.Sync {
 			foreach (var queue in Queue.Values) {
 				while (queue.Count > 0) {
 					var ftp = queue.Dequeue();
-                    if (ftp != null) {
-                        if (ftp.IsConnected) ftp.Close();
-                        ftp.Dispose();
-                    }
+					if (ftp != null) {
+						if (ftp.IsConnected) ftp.Close();
+						ftp.Dispose();
+					}
 				}
 			}
 		}

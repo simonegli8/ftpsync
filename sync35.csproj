@@ -49,9 +49,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Arguments.cs" />
-    <Compile Include="BlockingStream.cs" />
     <Compile Include="FtpClient.cs" />
     <Compile Include="Paths.cs" />
+    <Compile Include="PipeStream.cs" />
     <Compile Include="ResourceQueue.cs" />
     <Compile Include="Directory.cs" />
     <Compile Include="FtpConnections.cs" />

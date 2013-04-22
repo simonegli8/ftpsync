@@ -22,7 +22,14 @@ namespace johnshope.Sync {
 
 	public class DirectoryListing: KeyedCollection<string, FileOrDirectory> {
 		public DirectoryListing(): base() { }
-		public DirectoryListing(IEnumerable<FileOrDirectory> list): this() { foreach (var e in list) Add(e); }
+		public DirectoryListing(IEnumerable<FileOrDirectory> list): this() {
+			foreach (var e in list) {
+				try {
+					Add(e);
+				} catch {
+				}
+			}
+		}
 
 		protected override string GetKeyForItem(FileOrDirectory item) {
 			return item.Name;

@@ -998,13 +998,16 @@ namespace Starksoft.Net.Ftp
             try
             {
                 base.SendRequest(new FtpRequest(base.CharacterEncoding, FtpCmd.Feat));
-            }
+					 //return base.TransferText(new FtpRequest(base.CharacterEncoding, FtpCmd.Feat));
+				}
             catch (FtpException fex)
             {
                 throw new FtpException("An error occurred when retrieving features.", base.LastResponse, fex);
             }
-                
-            return base.LastResponse.Text;
+				var sb = new StringBuilder();
+			  for (int i = 1; i < base.LastResponseList.Count - 1; i++) sb.AppendLine(base.LastResponseList[i].RawText.Trim());
+
+			  return sb.ToString();
         }
 
         /// <summary>

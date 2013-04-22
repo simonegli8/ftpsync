@@ -199,7 +199,7 @@ namespace Starksoft.Net.Ftp
         /// The ERPT command.
         /// </summary>
         Erpt
-    }
+	 }
  
     /// <summary>
     /// FTP request object which contains the command, arguments and text or an FTP request.
