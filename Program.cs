@@ -36,11 +36,11 @@ namespace johnshope.Sync {
 					Console.WriteLine("Usage: sync sourceurl desturl [/update | /clone | /add] [/x excludepatterns] [logfilename] [/v]");
 					Console.WriteLine();
 					Console.WriteLine("- Urls can be either ftp urls or local paths");
-					Console.WriteLine("-	Ftp urls are of the form protocol://username:password@server:port/path?ftp-options");
-					Console.WriteLine("   Ftp urls must be url encoded. For example a space must be written as %20.");
-					Console.WriteLine("-	Protocol can be either ftp or ftps");
-					Console.WriteLine("-	Ftp-options are delimited by a & and are of the form parameter or parameter=value");
-					Console.WriteLine("-	Available ftp-options are:");
+					Console.WriteLine("- Ftp urls are of the form protocol://username:password@server:port/path?ftp-options");
+					Console.WriteLine("  Ftp urls must be url encoded. For example a space must be written as %20.");
+					Console.WriteLine("- Protocol can be either ftp or ftps");
+					Console.WriteLine("- Ftp-options are delimited by a & and are of the form parameter or parameter=value");
+					Console.WriteLine("- Available ftp-options are:");
 					Console.WriteLine("  - \"passive\" for passive ftp mode");
 					Console.WriteLine("  - \"active\" for active ftp mode");
 					Console.WriteLine("  - \"connections\" for the number of concurrent connections");
@@ -52,17 +52,17 @@ namespace johnshope.Sync {
 					Console.WriteLine("  - \"crc\" for auto CRC32 data transfer checksum check.");
 					Console.WriteLine("  - \"md5\" for auto MD5 data transfer checksum check.");
 					Console.WriteLine("  - \"sha\" for auto SHA1 data transfer checksum check.");
-					Console.WriteLine("-	The connections option reqires an int value that limits the maximum concurent connections.");
-					Console.WriteLine("-	The default options are passive&connections=10");
-					Console.WriteLine("-	The /update option tells sync to keep newer files in the destination.");
-					Console.WriteLine("-	The /clone option tells sync to clone the source and discard all changes in the destination. This is the default.");
-					Console.WriteLine("-	The /add option tells sync to add all files that are not present or outdated in the destination, but not");
+					Console.WriteLine("- The connections option reqires an int value that limits the maximum concurent connections.");
+					Console.WriteLine("- The default options are passive&connections=10");
+					Console.WriteLine("- The /update option tells sync to keep newer files in the destination.");
+					Console.WriteLine("- The /clone option tells sync to clone the source and discard all changes in the destination. This is the default.");
+					Console.WriteLine("- The /add option tells sync to add all files that are not present or outdated in the destination, but not");
 					Console.WriteLine("  to delete any files or overwrite newer files.");
                     Console.WriteLine("- With the /x you can specify a comma or semicolon separated list of exclude file patterns.");
                     Console.WriteLine("  Use / instead of \\ in patterns. Only one asterisk (*) is allowed per pattern, so instead of ");
                     Console.WriteLine("  myfolder/*.* you would write myfolder/* .");
-					Console.WriteLine("-	You can redirect output to a logfile by specifying a logfile name.");
-					Console.WriteLine("-	You can set the output to verbose mode with the /v switch.");
+					Console.WriteLine("- You can redirect output to a logfile by specifying a logfile name.");
+					Console.WriteLine("- You can set the output to verbose mode with the /v switch.");
 					return;
 				}
                 
