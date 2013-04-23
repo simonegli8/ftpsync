@@ -2,34 +2,36 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Diagnostics.Contracts;
 using Starksoft.Net.Ftp;
 
 namespace johnshope.Sync {
 
 	public class FtpConnections {
 
-		static Dictionary<string, ResourceQueue<FtpClient>> Queue = new Dictionary<string, ResourceQueue<FtpClient>>();
-		static Dictionary<string, int?> TimeOffsets = new Dictionary<string, int?>();
-		static Dictionary<string, string> Features = new Dictionary<string, string>();
+		public SyncJob Job { get; set; }
+		public Log Log { get { return Job.Log; } }
 
-		static string Key(FtpClient ftp) { return ftp.Host + ":" + ftp.Port.ToString(); }
-		static string Key(Uri uri) { return uri.Host + ":" + uri.Port.ToString(); }
+		Dictionary<string, ResourceQueue<FtpClient>> Queue = new Dictionary<string, ResourceQueue<FtpClient>>();
+		Dictionary<string, int?> TimeOffsets = new Dictionary<string, int?>();
+		Dictionary<string, string> Features = new Dictionary<string, string>();
 
-		static int? Connections(Uri url) {
+		string Key(FtpClient ftp) { return ftp.Host + ":" + ftp.Port.ToString(); }
+		string Key(Uri uri) { return uri.Host + ":" + uri.Port.ToString(); }
+
+		int? Connections(Uri url) {
 			var query = url.Query();
 			int con;
 			if (int.TryParse((query["connections"] ?? "").ToString(), out con)) return con;
 			else return null;
 		}
 
-		static string Proxy(Uri url) {
+		string Proxy(Uri url) {
 			var query = url.Query();
 			string proxy = (query["proxy"] ?? "").ToString();
 			return proxy;
 		}
 
-		static int? TimeOffset(Uri url) {
+		int? TimeOffset(Uri url) {
 			var query = url.Query();
 			int zone = 0;
 			string zonestr = (string)query["time"];
@@ -40,27 +42,25 @@ namespace johnshope.Sync {
 			return zone;
 		}
 
-		static int clientIndex = 0;
+		int clientIndex = 0;
 
-		public static string FTPTag(int n) { return "FTP" + n.ToString(); }
+		public string FTPTag(int n) { return "FTP" + n.ToString(); }
 
-		public static FtpClient Open(ref Uri url) {
-			var pathchanged = false;
-			bool pathcorrect = false;
-			string oldpath,oldftppath;
+		public FtpClient Open(ref Uri url) {
 			var queue = Queue[Key(url)];
 			var path = url.Path();
 			var ftp = queue.DequeueOrBlock(client => client.CurrentDirectory == client.CorrectPath(path));
 			try {
 				if (ftp == null) {
 					ftp = new johnshope.Sync.FtpClient(url.Host, url.Port, url.Scheme == "ftps" ? FtpSecurityProtocol.Tls1Explicit : FtpSecurityProtocol.None, ++clientIndex);
+					ftp.Job = Job;
 					//ftp.IsLoggingOn = Sync.Verbose;
-					if (Sync.Verbose) {
+					if (Job.Verbose) {
 						ftp.ClientRequest += new EventHandler<FtpRequestEventArgs>((sender, args) => {
-							lock (Log.Lock) { Log.YellowLabel(FTPTag(ftp.Index) + "> "); Log.Text(args.Request.Text); }
+							lock (Log) { Log.YellowLabel(FTPTag(ftp.Index) + "> "); Log.Text(args.Request.Text); }
 						});
 						ftp.ServerResponse += new EventHandler<FtpResponseEventArgs>((sender, args) => {
-							lock (Log.Lock) { Log.Label(FTPTag(ftp.Index) + ": "); Log.Text(args.Response.RawText); }
+							lock (Log) { Log.Label(FTPTag(ftp.Index) + ": "); Log.Text(args.Response.RawText); }
 						});
 					}
 					if (url.Query()["passive"] != null || url.Query()["active"] == null) ftp.DataTransferMode = TransferMode.Passive;
@@ -151,17 +151,17 @@ namespace johnshope.Sync {
 			return ftp;
 		}
 
-		public static void Pass(FtpClient client) {
+		public void Pass(FtpClient client) {
 			if (client == null || client.Clients != 1) throw new Exception("FTP connection pass precondition failed.");
 			client.Clients--;
 			Queue[Key(client)].Enqueue(client);
 		}
 
-		public static int Count(Uri url) { if (url.IsFile) return 1; else return Queue[Key(url)].Count; }
+		public int Count(Uri url) { if (url.IsFile) return 1; else return Queue[Key(url)].Count; }
 
-		public static int Allocate(Uri url) { if (!url.IsFile) { Queue[Key(url)] = new ResourceQueue<FtpClient>(); var n = Connections(url) ?? 10; var i = n; while (i-- > 0) Queue[Key(url)].Enqueue(null); return n; } return 1; }
+		public int Allocate(Uri url) { if (!url.IsFile) { Queue[Key(url)] = new ResourceQueue<FtpClient>(); var n = Connections(url) ?? 10; var i = n; while (i-- > 0) Queue[Key(url)].Enqueue(null); return n; } return 1; }
 
-		public static void Close() {
+		public void Close() {
 			foreach (var queue in Queue.Values) {
 				while (queue.Count > 0) {
 					var ftp = queue.Dequeue();

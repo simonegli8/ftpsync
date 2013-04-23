@@ -431,6 +431,7 @@ namespace Starksoft.Net.Ftp
 
         #endregion
 
+		  public johnshope.Sync.SyncJob Job { get; set; }
         #region Private Variables and Constants
 
         private TcpClient _commandConn;
@@ -525,7 +526,7 @@ namespace Starksoft.Net.Ftp
         /// <summary>
         /// Connection closed event.
         /// </summary>
-        public event EventHandler<ConnectionClosedEventArgs> ConnectionClosed;
+		  public event EventHandler<ConnectionClosedEventArgs> ConnectionClosed;
 
         #endregion
 
@@ -1844,7 +1845,7 @@ namespace Starksoft.Net.Ftp
             // Accept the connection.  BeginAcceptSocket() creates the accepted socket.
             _activeListener.BeginAcceptTcpClient(new AsyncCallback(this.AcceptTcpClientCallback), _activeListener);
 
-			johnshope.Sync.Log.Debug("Opening Active Data Connection on Port " + listenerPort.ToString());
+				Job.Log.Debug("Opening Active Data Connection on Port " + listenerPort.ToString());
 
             //  send a command to the server instructing it to connect to
             //  the local ip address and port that the tcplistener is bound to

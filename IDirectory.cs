@@ -11,8 +11,9 @@ namespace johnshope.Sync {
 	public enum ObjectClass { File, Directory }
 
 	public class FileOrDirectory {
-        public FileOrDirectory Parent { get; set; }
-        public string RelativePath { get { if (Parent == null) return Name; else return Parent.RelativePath + "/" + Name; } }
+		public SyncJob Job { get; set; }
+		public FileOrDirectory Parent { get; set; }
+		public string RelativePath { get { if (Parent == null) return Name; else return Parent.RelativePath + "/" + Name; } }
 		public string Name;
 		public ObjectClass Class;
 		public DateTime Changed;
@@ -20,14 +21,11 @@ namespace johnshope.Sync {
 		public long Size;
 	}
 
-	public class DirectoryListing: KeyedCollection<string, FileOrDirectory> {
-		public DirectoryListing(): base() { }
+	public class DirectoryListing : KeyedCollection<string, FileOrDirectory> {
+		public DirectoryListing() : base() { }
 		public DirectoryListing(IEnumerable<FileOrDirectory> list): this() {
 			foreach (var e in list) {
-				try {
-					Add(e);
-				} catch {
-				}
+				try { Add(e); } catch { }
 			}
 		}
 
@@ -35,8 +33,9 @@ namespace johnshope.Sync {
 			return item.Name;
 		}
 	}
-	
+
 	public interface IDirectory {
+		SyncJob Job { get; set; }
 		Uri Url { get; set; }
 		DirectoryListing List();
 		void WriteFile(Stream file, FileOrDirectory src);

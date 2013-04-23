@@ -9,11 +9,15 @@ namespace johnshope.Sync {
 
 	class LocalDirectory: FileOrDirectory, IDirectory {
 
+		public SyncJob Job { get; set; }
+		public Log Log { get { return Job.Log; } }
+
 		public Uri Url { get; set; }
 
 		public string Path { get { return HttpUtility.UrlDecode(Url.LocalPath); } }
 
-		public LocalDirectory(FileOrDirectory parent, Uri url) {
+		public LocalDirectory(FileOrDirectory parent, Uri url, SyncJob job) {
+			Job = job;
             Parent = parent;
             if (!url.ToString().Contains(':')) {
                 if (url.ToString() == ".") url = new Uri(Environment.CurrentDirectory);
@@ -36,13 +40,13 @@ namespace johnshope.Sync {
 				if (info.Exists) {
 					var finfos = info.GetFileSystemInfos();
 					var infos = info.GetFileSystemInfos()
-						.Select(fi => fi is FileInfo ? new FileOrDirectory { Name = fi.Name, Class = ObjectClass.File, ChangedUtc = fi.LastWriteTimeUtc, Size = ((FileInfo)fi).Length, Parent = this } : new LocalDirectory(this, new Uri(fi.FullName)));
+						.Select(fi => fi is FileInfo ? new FileOrDirectory { Name = fi.Name, Class = ObjectClass.File, ChangedUtc = fi.LastWriteTimeUtc, Size = ((FileInfo)fi).Length, Parent = this } : new LocalDirectory(this, new Uri(fi.FullName), Job));
                     return new DirectoryListing(infos);
 				} else {
 					return new DirectoryListing();
 				}
 			} catch (Exception ex) {
-				Sync.Failure(this, ex);
+				Job.Failure(this, ex);
 			}
 			return new DirectoryListing();
 		}
@@ -60,7 +64,7 @@ namespace johnshope.Sync {
 				}
 				File.SetLastAccessTimeUtc(path, src.ChangedUtc);
 			} catch (Exception ex) {
-				Sync.Failure(src, ex);
+				Job.Failure(src, ex);
 			}
 		}
 
@@ -69,7 +73,7 @@ namespace johnshope.Sync {
 				var path = System.IO.Path.Combine(Path, src.Name);
 				return File.OpenRead(path);
 			} catch (Exception ex) {
-				Sync.Failure(src, ex);
+				Job.Failure(src, ex);
 			}
 			return null;
 		}
@@ -77,9 +81,9 @@ namespace johnshope.Sync {
 		public void DeleteFile(FileOrDirectory dest) {
 			try {
 				var path = System.IO.Path.Combine(Path, dest.Name);
-				if (path != Sync.Log) System.IO.File.Delete(path);
+				if (new FileInfo(path).FullName != new FileInfo(Job.LogFile).FullName) System.IO.File.Delete(path);
 			} catch (Exception ex) {
-				Sync.Failure(dest, ex);
+				Job.Failure(dest, ex);
 			}
 		}
 
@@ -87,7 +91,7 @@ namespace johnshope.Sync {
 			try {
 				System.IO.Directory.Delete(((LocalDirectory)dest).Path, true);
 			} catch (Exception ex) {
-				Sync.Failure(dest, ex);
+				Job.Failure(dest, ex);
 			}
 		}
 
@@ -95,10 +99,10 @@ namespace johnshope.Sync {
 			try {
 				var path = System.IO.Path.Combine(Path, dest.Name);
 				if (dest.Class == ObjectClass.File) {
-					if (path != Sync.Log) System.IO.File.Delete(path);
+					if (new FileInfo(path).FullName != new FileInfo(Job.LogFile).FullName) System.IO.File.Delete(path);
 				}  else System.IO.Directory.Delete(path, true);
 			} catch (Exception ex) {
-				Sync.Failure(dest, ex);
+				Job.Failure(dest, ex);
 			}
 		}
 
@@ -108,9 +112,9 @@ namespace johnshope.Sync {
 				if (src == null) path = Path;
 				else path = System.IO.Path.Combine(Path, src.Name);
 				System.IO.Directory.CreateDirectory(path);
-				return new LocalDirectory(this, new Uri(path));
+				return new LocalDirectory(this, new Uri(path), Job);
 			} catch (Exception ex) {
-				Sync.Failure(src, ex);
+				Job.Failure(src, ex);
 			}
 			return null;
 		}

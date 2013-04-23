@@ -10,15 +10,10 @@ namespace johnshope.Sync {
 
 	public class Program {
 
-		public static CopyMode Mode = CopyMode.Clone;
-		public static string Log = null;
-		public static bool Verbose = false;
-		public static string ExcludePatterns = null;
-
 #if NET4
-		public const string WelcomeMsg = "johnshope's ftp and folder sync v1.10 for .NET 4";
+		public const string WelcomeMsg = "johnshope's ftp and folder sync v1.4 for .NET 4";
 #else
-		public const string WelcomeMsg = "johnshope's ftp and folder sync v1.10 for .NET 3.5";
+		public const string WelcomeMsg = "johnshope's ftp and folder sync v1.4 for .NET 3.5";
 #endif
 
 		static void Main(string[] argsarr) {
@@ -27,13 +22,15 @@ namespace johnshope.Sync {
 
 			bool wait = false;
 
+			var job = new SyncJob();
+
 			try {
 
 
 				if (args.Count < 2 || 7 < args.Count) {
 					Console.Write(WelcomeMsg);
 					Console.WriteLine("");
-					Console.WriteLine("Usage: sync sourceurl desturl [/update | /clone | /add] [/x excludepatterns] [logfilename] [/v]");
+					Console.WriteLine("Usage: sync sourceurl desturl [/update | /clone | /add] [/x excludepatterns] [logfilename] [/v] [/q]");
 					Console.WriteLine();
 					Console.WriteLine("- Urls can be either ftp urls or local paths");
 					Console.WriteLine("- Ftp urls are of the form protocol://username:password@server:port/path?ftp-options");
@@ -62,7 +59,7 @@ namespace johnshope.Sync {
 					Console.WriteLine("  Use / instead of \\ in patterns. Only one asterisk (*) is allowed per pattern, so instead of ");
 					Console.WriteLine("  myfolder/*.* you would write myfolder/* .");
 					Console.WriteLine("- You can redirect output to a logfile by specifying a logfile name.");
-					Console.WriteLine("- You can set the output to verbose mode with the /v switch.");
+					Console.WriteLine("- You can set the output to verbose mode with the /v switch or to quiet mode with the /q switch.");
 					return;
 				}
 
@@ -73,29 +70,30 @@ namespace johnshope.Sync {
 				else src = new Uri(System.IO.Path.Combine(Environment.CurrentDirectory, srcarg));
 				if (destarg.Contains(':')) dest = new Uri(destarg);
 				else dest = new Uri(System.IO.Path.Combine(Environment.CurrentDirectory, destarg));
-				Log = null;
-				Verbose = false;
+				job.LogFile = null;
+				job.Verbose = false;
 
-				Mode = CopyMode.Clone;
-				if (args.Has("/update")) Mode = CopyMode.Update;
-				if (args.Has("/add")) Mode = CopyMode.Add;
-				if (args.Has("/clone")) Mode = CopyMode.Clone;
+				job.Mode = CopyMode.Clone;
+				if (args.Has("/update")) job.Mode = CopyMode.Update;
+				if (args.Has("/add")) job.Mode = CopyMode.Add;
+				if (args.Has("/clone")) job.Mode = CopyMode.Clone;
+				string ExcludePatterns = null;
 				args.Has("/x", out ExcludePatterns);
-				ExcludePatterns = ExcludePatterns ?? "";
-				Verbose = args.Has("/v");
+				job.ExcludePatterns = ExcludePatterns ?? "";
+				job.Verbose = args.Has("/v");
+				job.Quiet = args.Has("/q");
 				wait = args.Has("/w");
 				//if (args.Has("/t")) SpeedTest.Test();
-				Log = args.Pop();
-
+				job.LogFile = args.Pop();
 
 				var now = DateTime.Now;
-				johnshope.Sync.Log.Text("######  " + now.ToShortDateString() + " " + now.ToShortTimeString() + "   " + WelcomeMsg);
-				johnshope.Sync.Log.Text("########################   Run sync without parameters for help.");
-				johnshope.Sync.Log.Text("");
+				job.Log.Text("######  " + now.ToShortDateString() + " " + now.ToShortTimeString() + "   " + WelcomeMsg);
+				job.Log.Text("########################   Run sync without parameters for help.");
+				job.Log.Text("");
 
-				Sync.Directory(src, dest);
+				job.Directory(src, dest);
 			} catch (Exception ex) {
-				johnshope.Sync.Log.Exception(ex);
+				job.Log.Exception(ex);
 			}
 
 			if (wait) { Console.WriteLine("Press any key..."); Console.ReadKey(); }
