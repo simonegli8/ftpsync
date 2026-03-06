@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <OutputType>Library</OutputType>
+        <RootNamespace>Johnshope.Sync</RootNamespace>
+        <AssemblyName>sync</AssemblyName>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <AssemblyTitle>sync</AssemblyTitle>
+        <Product>sync</Product>
+        <Copyright>Copyright Estrellas de Esperanza ©  2025</Copyright>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+        <FileVersion>1.0.0.0</FileVersion>
+        <OutputPath>bin\$(Configuration)\</OutputPath>
+        <PlatformTarget>AnyCPU</PlatformTarget>
+        <LangVersion>13</LangVersion>
+        <Nullable>disable</Nullable>
+        <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    </PropertyGroup>
+    <PropertyGroup Condition=" $(Configuration) == 'Debug' ">
+        <DebugType>embedded</DebugType>
+        <DefineConstants>TRACE;DEBUG</DefineConstants>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+        <DebugType>embedded</DebugType>
+        <DefineConstants>TRACE</DefineConstants>
+    </PropertyGroup>
+</Project>

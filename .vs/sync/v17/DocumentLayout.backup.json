@@ -1,0 +1,156 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\GitHub\\ftpsync\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{C12B1C6B-13E5-01EA-DECF-8CBE0D965DA8}|synclib\\synclib.csproj|c:\\github\\ftpsync\\synclib\\synclib.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{C12B1C6B-13E5-01EA-DECF-8CBE0D965DA8}|synclib\\synclib.csproj|solutionrelative:synclib\\synclib.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2CCDC357-E85D-4203-AF66-07F6F4A7EDE6}|sync\\sync\\sync.csproj|c:\\github\\ftpsync\\sync\\sync\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2CCDC357-E85D-4203-AF66-07F6F4A7EDE6}|sync\\sync\\sync.csproj|solutionrelative:sync\\sync\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C12B1C6B-13E5-01EA-DECF-8CBE0D965DA8}|synclib\\synclib.csproj|c:\\github\\ftpsync\\synclib\\idirectory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C12B1C6B-13E5-01EA-DECF-8CBE0D965DA8}|synclib\\synclib.csproj|solutionrelative:synclib\\idirectory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C12B1C6B-13E5-01EA-DECF-8CBE0D965DA8}|synclib\\synclib.csproj|c:\\github\\ftpsync\\synclib\\directory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C12B1C6B-13E5-01EA-DECF-8CBE0D965DA8}|synclib\\synclib.csproj|solutionrelative:synclib\\directory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2CCDC357-E85D-4203-AF66-07F6F4A7EDE6}|sync\\sync\\sync.csproj|c:\\github\\ftpsync\\sync\\sync\\arguments.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2CCDC357-E85D-4203-AF66-07F6F4A7EDE6}|sync\\sync\\sync.csproj|solutionrelative:sync\\sync\\arguments.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2CCDC357-E85D-4203-AF66-07F6F4A7EDE6}|sync\\sync\\sync.csproj|c:\\github\\ftpsync\\sync\\sync\\sync.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{2CCDC357-E85D-4203-AF66-07F6F4A7EDE6}|sync\\sync\\sync.csproj|solutionrelative:sync\\sync\\sync.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C12B1C6B-13E5-01EA-DECF-8CBE0D965DA8}|synclib\\synclib.csproj|c:\\github\\ftpsync\\synclib\\syncjob.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C12B1C6B-13E5-01EA-DECF-8CBE0D965DA8}|synclib\\synclib.csproj|solutionrelative:synclib\\syncjob.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}|Solution Items{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}|C:\\GitHub\\ftpsync\\README.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}",
+      "RelativeMoniker": "D:0:0:{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}|Solution Items{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}|solutionrelative:README.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 6,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "IDirectory.cs",
+              "DocumentMoniker": "C:\\GitHub\\ftpsync\\synclib\\IDirectory.cs",
+              "RelativeDocumentMoniker": "synclib\\IDirectory.cs",
+              "ToolTip": "C:\\GitHub\\ftpsync\\synclib\\IDirectory.cs",
+              "RelativeToolTip": "synclib\\IDirectory.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAATAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-25T20:02:16.633Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Directory.cs",
+              "DocumentMoniker": "C:\\GitHub\\ftpsync\\synclib\\Directory.cs",
+              "RelativeDocumentMoniker": "synclib\\Directory.cs",
+              "ToolTip": "C:\\GitHub\\ftpsync\\synclib\\Directory.cs",
+              "RelativeToolTip": "synclib\\Directory.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAuwAkAAAAQAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-25T20:01:48.998Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "SyncJob.cs",
+              "DocumentMoniker": "C:\\GitHub\\ftpsync\\synclib\\SyncJob.cs",
+              "RelativeDocumentMoniker": "synclib\\SyncJob.cs",
+              "ToolTip": "C:\\GitHub\\ftpsync\\synclib\\SyncJob.cs",
+              "RelativeToolTip": "synclib\\SyncJob.cs",
+              "ViewState": "AgIAAKsAAAAAAAAAAAAAAL0AAAATAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-25T19:58:19.483Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Arguments.cs",
+              "DocumentMoniker": "C:\\GitHub\\ftpsync\\sync\\sync\\Arguments.cs",
+              "RelativeDocumentMoniker": "sync\\sync\\Arguments.cs",
+              "ToolTip": "C:\\GitHub\\ftpsync\\sync\\sync\\Arguments.cs",
+              "RelativeToolTip": "sync\\sync\\Arguments.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAABBAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-25T19:57:16.166Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "sync",
+              "DocumentMoniker": "C:\\GitHub\\ftpsync\\sync\\sync\\sync.csproj",
+              "RelativeDocumentMoniker": "sync\\sync\\sync.csproj",
+              "ToolTip": "C:\\GitHub\\ftpsync\\sync\\sync\\sync.csproj",
+              "RelativeToolTip": "sync\\sync\\sync.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-10-25T19:48:00.25Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\GitHub\\ftpsync\\sync\\sync\\Program.cs",
+              "RelativeDocumentMoniker": "sync\\sync\\Program.cs",
+              "ToolTip": "C:\\GitHub\\ftpsync\\sync\\sync\\Program.cs",
+              "RelativeToolTip": "sync\\sync\\Program.cs",
+              "ViewState": "AgIAACUAAAAAAAAAAIAywDgAAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-25T19:45:39.709Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "synclib",
+              "DocumentMoniker": "C:\\GitHub\\ftpsync\\synclib\\synclib.csproj",
+              "RelativeDocumentMoniker": "synclib\\synclib.csproj",
+              "ToolTip": "C:\\GitHub\\ftpsync\\synclib\\synclib.csproj",
+              "RelativeToolTip": "synclib\\synclib.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABkAAAAKAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-10-25T19:44:31.136Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "README.md",
+              "DocumentMoniker": "C:\\GitHub\\ftpsync\\README.md",
+              "RelativeDocumentMoniker": "README.md",
+              "ToolTip": "C:\\GitHub\\ftpsync\\README.md",
+              "RelativeToolTip": "README.md",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAABNAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001818|",
+              "WhenOpened": "2025-10-25T19:43:32.674Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
